@@ -1,0 +1,28 @@
+#!/bin/bash
+#SBATCH -J pi-gpu_alumno05          # Nombre del trabajo
+#SBATCH -p bohr-gpu                 # Partición en Bohr (sustituye a nikola-gpu)
+#SBATCH --nodes=1                   # 1 Nodo
+#SBATCH --ntasks=1                  # 1 Tarea
+#SBATCH --cpus-per-task=1           # 1 CPU asignada
+#SBATCH --mem=8G                    # Memoria RAM (subida a 8G para N=10^8)
+#SBATCH --time=00:15:00             # Tiempo máximo
+#SBATCH --output=pi_%j.out          # Archivo de salida
+#SBATCH --chdir=/home/alumno05/lab-gpu
+
+# Configuración de errores y carga de módulos
+set -euo pipefail
+module load anaconda/2025.06
+
+# Bucle para cumplir el apartado 3.3.c
+for NUMBER in 10000000 100000000; do
+    echo "==============================================="
+    echo "Ejecutando Pi Monte Carlo con N=$NUMBER"
+    echo "==============================================="
+
+    # Ejecutamos ipython sobre el notebook
+    # srun asegura que se use el recurso de GPU asignado
+    srun ipython pi-gpu_alumno05.ipynb "$NUMBER"
+done
+
+echo "FINALIZADO=$(date)"
+module unload anaconda/2025.06
